@@ -1,8 +1,8 @@
 package se.magnus.api.core.review;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import org.springframework.web.bind.annotation.*;
 
 public interface ReviewService {
 
@@ -17,4 +17,32 @@ public interface ReviewService {
     produces = "application/json")
   List<Review> getReviews(
           @RequestParam(value = "productId", required = true) int productId);
+
+
+  /**
+   * Sample usage, see below.
+   *
+   * curl -X POST $HOST:$PORT/review \
+   * -H "Content-Type: application/json" --data \
+   * '{"productId":123,"reviewId":456,"author":"me","subject":"yada, yada, yada","content":"yada, yada, yada"}'
+   *
+    * @param body
+   * @return
+   */
+  @PostMapping(
+          value = "/review",
+          consumes = "application/json",
+          produces = "application/json"
+  )
+  Review createReview(@RequestBody Review body);
+
+  /**
+   * Sample usage: "curl -X DELETE $HOST:$PORT/review?productId=1".
+   *
+   * @param productId Id of the product
+   */
+  @DeleteMapping(value = "/review")
+  void deleteReviews(@RequestParam(value = "productId", required = true) int productId);
+
 }
+

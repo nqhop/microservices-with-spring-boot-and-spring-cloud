@@ -41,4 +41,14 @@ public class ReviewServiceImpl implements ReviewService {
 
         return list;
     }
+
+    @Override
+    public Review createReview(Review body) {
+        return null;
+    }
+
+    @Override
+    public void deleteReviews(int productId) {
+
+    }
 }
