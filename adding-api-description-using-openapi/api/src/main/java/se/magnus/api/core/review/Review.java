@@ -81,5 +81,15 @@ public class Review {
     this.serviceAddress = serviceAddress;
   }
 
-
+  @Override
+  public String toString() {
+    return "Review{" +
+            "productId=" + productId +
+            ", reviewId=" + reviewId +
+            ", author='" + author + '\'' +
+            ", subject='" + subject + '\'' +
+            ", content='" + content + '\'' +
+            ", serviceAddress='" + serviceAddress + '\'' +
+            '}';
+  }
 }

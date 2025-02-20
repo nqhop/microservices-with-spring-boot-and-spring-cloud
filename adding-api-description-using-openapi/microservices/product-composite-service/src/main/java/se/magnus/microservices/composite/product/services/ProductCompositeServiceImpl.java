@@ -43,6 +43,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
                     Recommendation recommendation = new Recommendation(body.getProductId(),
                             r.getRecommendationId(), r.getAuthor(), r.getRate(),
                             r.getContent(), null);
+                    LOG.debug("createCompositeProduct: adding recommendation: {}", r.getRecommendationId());
                     integration.createRecommendation(recommendation);
                 });
             }
@@ -50,6 +51,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
             if(body.getReviews() != null) {
                 body.getReviews().forEach(r -> {
                     Review review = new Review(body.getProductId(), r.getReviewId(), r.getAuthor(), r.getSubject(), r.getContent(), null);
+                    LOG.debug("createCompositeProduct: adding review: {}", r.getReviewId());
                     integration.createReview(review);
                 });
             }

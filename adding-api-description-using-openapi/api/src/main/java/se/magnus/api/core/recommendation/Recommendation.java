@@ -80,4 +80,16 @@ public class Recommendation {
   public void setServiceAddress(String serviceAddress) {
     this.serviceAddress = serviceAddress;
   }
+
+  @Override
+  public String toString() {
+    return "Recommendation{" +
+            "productId=" + productId +
+            ", recommendationId=" + recommendationId +
+            ", author='" + author + '\'' +
+            ", rate=" + rate +
+            ", content='" + content + '\'' +
+            ", serviceAddress='" + serviceAddress + '\'' +
+            '}';
+  }
 }

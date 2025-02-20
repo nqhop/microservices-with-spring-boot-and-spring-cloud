@@ -1,14 +1,14 @@
 version: '2.1'
 
 services:
-#  product:
-#    build: microservices/product-service
-#    mem_limit: 512m
-#    environment:
-#      SPRING_PROFILES_ACTIVE: docker
-#    depends_on:
-#      mongodb:
-#        condition: service_healthy
+  product:
+    build: microservices/product-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      mongodb:
+        condition: service_healthy
 
   recommendation:
     build: microservices/recommendation-service

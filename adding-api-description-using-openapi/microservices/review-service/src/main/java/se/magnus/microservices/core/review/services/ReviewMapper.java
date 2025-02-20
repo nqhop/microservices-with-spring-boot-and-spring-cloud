@@ -6,6 +6,8 @@ import org.mapstruct.Mappings;
 import se.magnus.api.core.review.Review;
 import se.magnus.microservices.core.review.persistence.ReviewEntity;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface ReviewMapper {
 
@@ -17,4 +19,8 @@ public interface ReviewMapper {
             @Mapping(target = "version", ignore = true),
     })
     ReviewEntity apiToEntity(Review api);
+
+    List<Review> entityListToApiList(List<ReviewEntity> entities);
+
+    List<ReviewEntity> apiListToEntityList(List<Review> apiList);
 }

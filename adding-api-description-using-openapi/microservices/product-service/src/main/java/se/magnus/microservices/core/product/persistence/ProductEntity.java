@@ -7,75 +7,62 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "products")
 public class ProductEntity {
-    @Id
-    private String id;
 
-    @Version
-    private Integer version;
+  @Id private String id;
 
-    @Indexed(unique = true)
-    private int productId;
+  @Version private Integer version;
 
-    private String name;
-    private int weight;
+  @Indexed(unique = true)
+  private int productId;
 
-    public ProductEntity() {
-    }
+  private String name;
+  private int weight;
 
-    public ProductEntity(int productId, String name, int weight) {
-        this.productId = productId;
-        this.name = name;
-        this.weight = weight;
-    }
+  public ProductEntity() {}
 
-    @Override
-    public String toString() {
-        return "ProductEntity{" +
-                "id='" + id + '\'' +
-                ", version=" + version +
-                ", productId=" + productId +
-                ", name='" + name + '\'' +
-                ", weight=" + weight +
-                '}';
-    }
+  public ProductEntity(int productId, String name, int weight) {
+    this.productId = productId;
+    this.name = name;
+    this.weight = weight;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public Integer getVersion() {
-        return version;
-    }
+  public Integer getVersion() {
+    return version;
+  }
 
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
+  public void setVersion(Integer version) {
+    this.version = version;
+  }
 
-    public int getProductId() {
-        return productId;
-    }
+  public int getProductId() {
+    return productId;
+  }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
+  public void setProductId(int productId) {
+    this.productId = productId;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public int getWeight() {
-        return weight;
-    }
+  public int getWeight() {
+    return weight;
+  }
 
-    public void setWeight(int weight) {
-        this.weight = weight;
-    }
+  public void setWeight(int weight) {
+    this.weight = weight;
+  }
 }
