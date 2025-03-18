@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
-public class controller {
+public class controller implements ProductCompositeService{
 
     private final RestTemplate restTemplate = new RestTemplate();
 

@@ -19,15 +19,11 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProductCompositeServiceImpl.class);
     private final ServiceUtil serviceUtil;
-    private final RestTemplate restTemplate;
-    private ProductCompositeIntegration integration;
+    private final ProductCompositeIntegration integration;
 
-    @Autowired
-    public ProductCompositeServiceImpl(
-            ServiceUtil serviceUtil, ProductCompositeIntegration integration, RestTemplate restTemplate) {
+    public ProductCompositeServiceImpl(ServiceUtil serviceUtil, ProductCompositeIntegration integration) {
         this.serviceUtil = serviceUtil;
         this.integration = integration;
-        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -109,5 +105,10 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
     ServiceAddresses serviceAddresses = new ServiceAddresses(serviceAddress, productAddress, reviewAddress, recommendationAddress);
 
     return new ProductAggregate(productId, name, weight, recommendationSummaries, reviewSummaries, serviceAddresses);
+    }
+
+    @Override
+    public String greeting() {
+        return integration.greeting();
     }
 }

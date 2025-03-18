@@ -191,4 +191,11 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
                 throw ex;
         }
     }
+
+    @Override
+    public String greeting() {
+        LOG.debug("ProductCompositeIntegration: greeting url {}", recommendationServiceUrl + "/greeting");
+        String recommendationGreeting = restTemplate.getForObject(recommendationServiceUrl + "/greeting", String.class);
+        return "productCompositeGreeting" + "---" + recommendationGreeting;
+    }
 }

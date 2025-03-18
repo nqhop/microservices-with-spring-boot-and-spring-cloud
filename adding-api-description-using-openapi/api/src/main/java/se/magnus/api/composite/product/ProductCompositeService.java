@@ -60,4 +60,8 @@ public interface ProductCompositeService {
   })
   @DeleteMapping(value = "/product-composite/{productId}")
   void deleteProduct(@PathVariable int productId);
+
+  @GetMapping(
+          value = "/greeting")
+  String greeting();
 }

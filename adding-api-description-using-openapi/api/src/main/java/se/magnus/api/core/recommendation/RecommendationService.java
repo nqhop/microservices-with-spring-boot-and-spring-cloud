@@ -43,4 +43,11 @@ public interface RecommendationService {
     produces = "application/json")
   List<Recommendation> getRecommendations(
     @RequestParam(value = "productId", required = true) int productId);
+
+
+//  just for test
+  @GetMapping(
+          value = "/recommendation/greeting",
+          produces = "application/json")
+  String greeting();
 }
