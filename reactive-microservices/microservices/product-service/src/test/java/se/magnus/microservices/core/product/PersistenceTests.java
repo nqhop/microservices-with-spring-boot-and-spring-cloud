@@ -51,6 +51,7 @@ class PersistenceTests extends MongoDbTestBase {
     savedEntity.setName("n2");
 
     StepVerifier.create(repository.save(savedEntity))
+            .expectNextMatches(savedEntity -> savedEntity.getName().equals("n2"))
             .verifyComplete();
 
     StepVerifier.create(repository.findById(savedEntity.getId()))
@@ -80,8 +81,7 @@ class PersistenceTests extends MongoDbTestBase {
   @Test
   void duplicateError() {
     ProductEntity entity = new ProductEntity(savedEntity.getProductId(), "n", 1);
-    StepVerifier.create(repository.save(entity)).expectError(DuplicateKeyException.class)
-            .verify();
+    StepVerifier.create(repository.save(entity)).expectError(DuplicateKeyException.class).verify();
   }
 
   @Test

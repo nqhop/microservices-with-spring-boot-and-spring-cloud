@@ -1,27 +1,17 @@
 package se.magnus.microservices.composite.product.services;
 
-import static java.util.logging.Level.FINE;
-import static org.springframework.http.HttpMethod.GET;
-import static reactor.core.publisher.Flux.empty;
-import static se.magnus.api.event.Event.Type.CREATE;
-import static se.magnus.api.event.Event.Type.DELETE;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
@@ -39,6 +29,13 @@ import se.magnus.api.event.Event;
 import se.magnus.api.exceptions.InvalidInputException;
 import se.magnus.api.exceptions.NotFoundException;
 import se.magnus.util.http.HttpErrorInfo;
+
+import java.io.IOException;
+
+import static java.util.logging.Level.FINE;
+import static reactor.core.publisher.Flux.empty;
+import static se.magnus.api.event.Event.Type.CREATE;
+import static se.magnus.api.event.Event.Type.DELETE;
 
 @Component
 public class ProductCompositeIntegration implements ProductService, RecommendationService, ReviewService {
@@ -114,32 +111,19 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 
   @Override
   public Mono<Void> deleteProduct(int productId) {
-    try {
-      String url = productServiceUrl + "/" + productId;
-      LOG.debug("Will call the deleteProduct API on URL: {}", url);
+    return Mono.fromRunnable(() -> sendMessage("products-out-0", new Event(null, productId, DELETE))
+    ).subscribeOn(publishEventScheduler).then();
 
-      restTemplate.delete(url);
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }
   }
 
   @Override
-  public Recommendation createRecommendation(Recommendation body) {
+  public Mono<Recommendation> createRecommendation(Recommendation body) {
 
-    try {
-      String url = recommendationServiceUrl;
-      LOG.debug("Will post a new recommendation to URL: {}", url);
-
-      Recommendation recommendation = restTemplate.postForObject(url, body, Recommendation.class);
-      LOG.debug("Created a recommendation with id: {}", recommendation.getProductId());
-
-      return recommendation;
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }
+    return Mono.fromCallable(() -> {
+      sendMessage("recommendations-out-0",
+              new Event(body, body.getRecommendationId(), CREATE));
+      return body;
+    }).subscribeOn(publishEventScheduler);
   }
 
   @Override
@@ -154,33 +138,18 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
   }
 
   @Override
-  public void deleteRecommendations(int productId) {
-    try {
-      String url = recommendationServiceUrl + "?productId=" + productId;
-      LOG.debug("Will call the deleteRecommendations API on URL: {}", url);
-
-      restTemplate.delete(url);
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }
+  public Mono<Void> deleteRecommendations(int productId) {
+    return Mono.fromRunnable(() -> {
+      sendMessage("recommendations-out-0", new Event(null, productId, DELETE));
+    }).subscribeOn(publishEventScheduler).then();
   }
 
   @Override
-  public Review createReview(Review body) {
-
-    try {
-      String url = reviewServiceUrl;
-      LOG.debug("Will post a new review to URL: {}", url);
-
-      Review review = restTemplate.postForObject(url, body, Review.class);
-      LOG.debug("Created a review with id: {}", review.getProductId());
-
-      return review;
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }
+  public Mono<Review> createReview(Review body) {
+    return Mono.fromCallable(() -> {
+      sendMessage("reviews-out-0", new Event(body, body.getReviewId(), CREATE));
+      return body;
+    }).subscribeOn(publishEventScheduler);
   }
 
   @Override
@@ -195,35 +164,13 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
   }
 
   @Override
-  public void deleteReviews(int productId) {
-    try {
-      String url = reviewServiceUrl + "?productId=" + productId;
-      LOG.debug("Will call the deleteReviews API on URL: {}", url);
-
-      restTemplate.delete(url);
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }
+  public Mono<Void> deleteReviews(int productId) {
+    return Mono.fromRunnable(() -> {
+      sendMessage("reviews-out-0", new Event(null, productId, DELETE));
+    }).subscribeOn(publishEventScheduler).then();
   }
 
-  private RuntimeException handleHttpClientException(HttpClientErrorException ex) {
-    switch (HttpStatus.resolve(ex.getStatusCode().value())) {
-
-      case NOT_FOUND:
-        return new NotFoundException(getErrorMessage(ex));
-
-      case UNPROCESSABLE_ENTITY:
-        return new InvalidInputException(getErrorMessage(ex));
-
-      default:
-        LOG.warn("Got an unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
-        LOG.warn("Error body: {}", ex.getResponseBodyAsString());
-        return ex;
-    }
-  }
-
-  private String getErrorMessage(HttpClientErrorException ex) {
+  private String getErrorMessage(WebClientResponseException ex) {
     try {
       return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
     } catch (IOException ioex) {
@@ -252,5 +199,26 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
         LOG.warn("Error body: {}", wcre.getResponseBodyAsString());
         return ex;
     }
+  }
+
+  public Mono<Health> getProductHealth() {
+    return getHealth(productServiceUrl);
+  }
+
+  public Mono<Health> getRecommendationHealth() {
+    return getHealth(recommendationServiceUrl);
+  }
+
+  public Mono<Health> getReviewHealth() {
+    return getHealth(reviewServiceUrl);
+  }
+
+  private Mono<Health> getHealth(String url) {
+    url += "/actuator/health";
+    LOG.debug("Will call the getHealth API on URL: {}", url);
+    return webClient.get().uri(url).retrieve().bodyToMono(String.class)
+            .map(s -> new Health.Builder().up().build())
+            .onErrorResume(ex -> Mono.just(new Health.Builder().down().build()))
+            .log(LOG.getName(), FINE);
   }
 }

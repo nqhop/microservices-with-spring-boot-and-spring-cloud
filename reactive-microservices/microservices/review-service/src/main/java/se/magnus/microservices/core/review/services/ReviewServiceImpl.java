@@ -80,9 +80,13 @@ public class ReviewServiceImpl implements ReviewService {
   }
 
   private Review internalCreateReview(Review body) {
-    ReviewEntity entity = mapper.apiToEntity(body);
-    ReviewEntity savedEntity = repository.save(entity);
-    return mapper.entityToApi(savedEntity);
+    try {
+      ReviewEntity entity = mapper.apiToEntity(body);
+      ReviewEntity savedEntity = repository.save(entity);
+      return mapper.entityToApi(savedEntity);
+    }catch (DataIntegrityViolationException e) {
+      throw new InvalidInputException("Duplicate key, Product Id: " + body.getProductId() + ", Review Id:" + body.getReviewId());
+    }
   }
 
 

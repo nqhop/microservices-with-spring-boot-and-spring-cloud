@@ -43,7 +43,7 @@ public class RecommendationServiceImpl implements RecommendationService {
             = repository.save(entity)
             .onErrorMap(
                     DuplicateKeyException.class,
-                    ex -> new InvalidInputException("Duplicate key, Product Id: " + body.getProductId()))
+                    ex -> new InvalidInputException("Duplicate key, Product Id: " + body.getProductId() + ", Recommendation Id: " + body.getRecommendationId()))
             .log(LOG.getName(), FINE)
             .map(mapper::entityToApi);
 

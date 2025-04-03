@@ -2,6 +2,7 @@ package se.magnus.microservices.core.recommendation.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.magnus.api.core.recommendation.Recommendation;
@@ -17,6 +18,7 @@ public class MessageProcessorConfig {
     private static final Logger LOG = LoggerFactory.getLogger(MessageProcessorConfig.class);
     private final RecommendationService recommendationService;
 
+    @Autowired
     public MessageProcessorConfig(RecommendationService recommendationService) {
         this.recommendationService = recommendationService;
     }

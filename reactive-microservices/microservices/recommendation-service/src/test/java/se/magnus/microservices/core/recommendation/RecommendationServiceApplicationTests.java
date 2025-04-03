@@ -26,7 +26,7 @@ class RecommendationServiceApplicationTests extends MongoDbTestBase {
 
   @BeforeEach
   void setupDb() {
-    repository.deleteAll();
+    repository.deleteAll().block();
   }
   
   @Test
@@ -56,13 +56,13 @@ class RecommendationServiceApplicationTests extends MongoDbTestBase {
       .jsonPath("$.productId").isEqualTo(productId)
       .jsonPath("$.recommendationId").isEqualTo(recommendationId);
 
-    assertEquals(1, repository.count());
+    assertEquals(1, repository.count().block());
 
     postAndVerifyRecommendation(productId, recommendationId, UNPROCESSABLE_ENTITY)
       .jsonPath("$.path").isEqualTo("/recommendation")
-      .jsonPath("$.message").isEqualTo("Duplicate key, Product Id: 1, Recommendation Id:1");
+      .jsonPath("$.message").isEqualTo("Duplicate key, Product Id: 1, Recommendation Id: 1");
 
-    assertEquals(1, repository.count());
+    assertEquals(1, repository.count().block());
   }
 
   @Test

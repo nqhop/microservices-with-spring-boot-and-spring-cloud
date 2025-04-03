@@ -5,12 +5,15 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Objects;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.OptimisticLockingFailureException;
+import reactor.test.StepVerifier;
 import se.magnus.microservices.core.recommendation.persistence.RecommendationEntity;
 import se.magnus.microservices.core.recommendation.persistence.RecommendationRepository;
 
@@ -24,7 +27,7 @@ class PersistenceTests extends MongoDbTestBase {
 
   @BeforeEach
   void setupDb() {
-    repository.deleteAll();
+    repository.deleteAll().block();
 
     RecommendationEntity entity = new RecommendationEntity(1, 2, "a", 3, "c");
     savedEntity = repository.save(entity).block();
@@ -42,7 +45,7 @@ class PersistenceTests extends MongoDbTestBase {
     RecommendationEntity foundEntity = repository.findById(newEntity.getId()).block();
     assertEqualsRecommendation(newEntity, foundEntity);
 
-    assertEquals(2, repository.count());
+    assertEquals(2, (long)repository.count().block());
   }
 
   @Test
@@ -57,7 +60,7 @@ class PersistenceTests extends MongoDbTestBase {
 
   @Test
   void delete() {
-    repository.delete(savedEntity);
+    repository.delete(savedEntity).block();
     assertFalse(repository.existsById(savedEntity.getId()).block());
   }
 
