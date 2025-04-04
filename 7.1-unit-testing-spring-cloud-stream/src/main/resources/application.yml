@@ -1,19 +1,21 @@
 spring:
   cloud:
     function:
-      definition:  stringSupplier;stringConsumer
+      definition:  messageConsumer
     stream:
       bindings:
-        stringSupplier-out-0:
-          destination: greetings-topic
-        stringConsumer-in-0:
-          destination: greetings-topic
+        test-out:
+          destination: test-queue
+        messageConsumer-in-0:
+          destination: test-queue
       poller:
-        fixed-delay: 5000
+        fixed-delay: 3000
       default-binder: rabbit
   rabbitmq:
     host: localhost
     port: 5672
+    username: guest
+    password: guest
 
 logging:
   level:
