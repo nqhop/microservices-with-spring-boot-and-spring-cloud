@@ -107,6 +107,9 @@ logging:
   level:
     root: INFO
     se.magnus: DEBUG
+    org.springframework.amqp: DEBUG
+    org.springframework.integration.amqp: DEBUG
+    org.springframework.messaging: DEBUG
 
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
@@ -126,6 +129,7 @@ app:
     host: review
     port: 8080
 
+spring.rabbitmq.host: rabbitmq
 
 spring.cloud.stream.bindings.products-out-0.producer:
   partition-key-expression: headers['partitionKey']
