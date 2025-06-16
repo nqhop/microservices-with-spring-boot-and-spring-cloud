@@ -28,7 +28,7 @@ import static reactor.core.publisher.Mono.just;
 import static se.magnus.api.event.Event.Type.CREATE;
 import static se.magnus.microservices.composite.product.IsSameEvent.sameEventExceptCreatedAt;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"eureka.client.enabled=false"})
 @Import({TestChannelBinderConfiguration.class})
 public class MessagingTests {
 

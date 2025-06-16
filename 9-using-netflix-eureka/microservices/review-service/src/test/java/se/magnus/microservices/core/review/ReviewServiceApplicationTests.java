@@ -15,7 +15,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import se.magnus.api.core.review.Review;
 import se.magnus.microservices.core.review.persistence.ReviewRepository;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"eureka.client.enabled=false"})
 class ReviewServiceApplicationTests extends MySqlTestBase {
 
   @Autowired
