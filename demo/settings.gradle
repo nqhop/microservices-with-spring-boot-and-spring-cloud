@@ -1,2 +1,0 @@
-include ':service-discovery'
-include ':backend-user'

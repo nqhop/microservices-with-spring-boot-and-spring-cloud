@@ -1,0 +1,4 @@
+include ':service-discovery'
+include ':backend-user'
+include ':service-prices'
+include ':service-books'

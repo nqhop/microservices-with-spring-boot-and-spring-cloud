@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: service-prices
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/bookstore
+    username: service_prices
+    password: service-price
+  sql.init.mode: always
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate.ddl-auto: validate
+  jackson:
+    deserialization:
+      fail-on-ignored-properties: false
+    serialization:
+      indent-output: true
+      write-date-keys-as-timestamps: true
+      write-bigdecimal-as-plain: true
+
+
+server:
+  port: 0
+  servlet:
+    context-path: /prices
+
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+
+logging.pattern.console: ${LOGPATTERN_CONSOLE:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n}
